@@ -1,0 +1,11 @@
+@startuml
+actor Usuario
+component "API REST\nNode.js + Express" as API
+component "Servicio de carrito" as Servicio
+component "Repositorio" as Repo
+database Redis
+Usuario --> API : HTTP / Postman
+API --> Servicio
+Servicio --> Repo
+Repo --> Redis : cliente oficial redis
+@enduml

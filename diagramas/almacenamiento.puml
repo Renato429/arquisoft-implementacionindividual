@@ -1,0 +1,12 @@
+@startuml
+map "Redis Hash: carrito:123" as carrito {
+  producto:101 => 2
+  producto:205 => 1
+  producto:310 => 3
+}
+note bottom of carrito
+  EXPIRE: 2592000 segundos (30 días)
+  Renovado al agregar, modificar o eliminar
+  un producto si permanece la clave.
+end note
+@enduml

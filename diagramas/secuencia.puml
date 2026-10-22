@@ -1,0 +1,19 @@
+@startuml
+actor Usuario
+participant "API Express" as API
+participant "Servicio de carrito" as Servicio
+participant Repositorio
+database Redis
+Usuario -> API : POST /api/carritos/123/productos
+API -> Servicio : agregar(123, 101, 2)
+Servicio -> Repositorio : set(123, 101, 2)
+Repositorio -> Redis : MULTI / HSET / EXPIRE / EXEC
+Redis --> Repositorio : resultados
+Repositorio --> Servicio : confirmado
+Servicio -> Repositorio : get(123)
+Repositorio -> Redis : HGETALL carrito:123
+Redis --> Repositorio : campos y cantidades
+Repositorio --> Servicio : Hash
+Servicio --> API : carrito
+API --> Usuario : HTTP 200 + JSON
+@enduml

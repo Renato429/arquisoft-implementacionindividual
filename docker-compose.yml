@@ -1,0 +1,16 @@
+name: redis-carrito-demo
+services:
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  redis-data:

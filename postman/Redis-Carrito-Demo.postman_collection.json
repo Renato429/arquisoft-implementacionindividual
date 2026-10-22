@@ -1,0 +1,275 @@
+{
+  "info": {
+    "name": "Redis Carrito Demo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Demostración de Renato Matías Almeyda Cordero. Ejecutar en orden con Redis y Node activos."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "usuarioId",
+      "value": "123"
+    },
+    {
+      "key": "productoId",
+      "value": "101"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Contenido esperado\", () => { pm.expect(data.redis).to.eql(\"PONG\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agregar producto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productoId\": \"{{productoId}}\",\n  \"cantidad\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Productos válidos\", () => pm.expect(data.productos).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agregar segundo producto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productoId\": \"205\",\n  \"cantidad\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Productos válidos\", () => pm.expect(data.productos).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar carrito",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Productos válidos\", () => pm.expect(data.productos).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Actualizar cantidad",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}/productos/{{productoId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cantidad\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Productos válidos\", () => pm.expect(data.productos).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar TTL",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}/ttl"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Contenido esperado\", () => { pm.expect(data.ttlSegundos).to.be.above(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Eliminar producto",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}/productos/{{productoId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Productos válidos\", () => pm.expect(data.productos).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar después de eliminar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Productos válidos\", () => pm.expect(data.productos).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vaciar carrito",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Productos válidos\", () => pm.expect(data.productos).to.be.an(\"array\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar carrito vacío",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/carritos/{{usuarioId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test(\"Contenido esperado\", () => { pm.expect(data.productos).to.eql([]); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
